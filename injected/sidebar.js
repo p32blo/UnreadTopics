@@ -10,16 +10,16 @@ if (input.length === 1 && !inReplyPage) {
 
     if (document.getElementById("msg" + lastPostID)) {
         var topicID = document.getElementsByName("topic")[0].value;
-        chrome.runtime.sendMessage({ "set-reading-last-page": topicID });
+        browser.runtime.sendMessage({ "set-reading-last-page": topicID });
     }
 }
 
 // Send data to extension to be analysed
-chrome.runtime.sendMessage({ "set-html": document.documentElement.outerHTML });
+browser.runtime.sendMessage({ "set-html": document.documentElement.outerHTML });
 
 var displayPic = true;
 
-chrome.runtime.sendMessage({ "get-embed-images": true }, function (msg) {
+browser.runtime.sendMessage({ "get-embed-images": true }, function (msg) {
     displayPic = msg;
 });
 
@@ -199,16 +199,16 @@ $("#openSelected").on("click", function (e) {
     var topicLinks = getSelectedTopicLinks();
 
     if (topicLinks.length > 0) {
-        chrome.runtime.sendMessage({ "open-links": topicLinks });
+        browser.runtime.sendMessage({ "open-links": topicLinks });
         setTimeout(() => {
-            chrome.runtime.sendMessage({ "close-current-tab": true });
+            browser.runtime.sendMessage({ "close-current-tab": true });
         }, 1500);
         closeSidepage();
     }
 });
 
 $("#refreshTopics").on("click", function (e) {
-    chrome.runtime.sendMessage({ "fetch-unread-topics": true }, function (response) {
+    browser.runtime.sendMessage({ "fetch-unread-topics": true }, function (response) {
         if (response.success) {
             getBancoTopicosPorLer();
         }
@@ -221,24 +221,24 @@ $("<div id='reportSelecionados'></div>").appendTo("#menuTPLS");
 $("<div id='reportLastUpdate'></div>").appendTo("#menuTPLS");
 $("<ul id='resultadoPesquisa' style='display: block;'></ul>").appendTo("#menuTPLS");
 
- Date.prototype.prettyDate = function() {
-     let res = "há mais de 30 minutos";
-     let diffSec = ( new Date() - this ) / 1000;
+Date.prototype.prettyDate = function () {
+    let res = "há mais de 30 minutos";
+    let diffSec = (new Date() - this) / 1000;
 
-     if( diffSec < 10 ) res = "agora mesmo";
-     else if( diffSec < 60 ) res = "há menos de um minuto atrás";
-     else if( diffSec < (60 * 30) ) {
-         let min = Math.floor(diffSec / 60);
-         let plural = min > 1 ? "s" : "";
-         res = `há ${min} minuto${plural} atrás`;
-     }
+    if (diffSec < 10) res = "agora mesmo";
+    else if (diffSec < 60) res = "há menos de um minuto atrás";
+    else if (diffSec < (60 * 30)) {
+        let min = Math.floor(diffSec / 60);
+        let plural = min > 1 ? "s" : "";
+        res = `há ${min} minuto${plural} atrás`;
+    }
 
-     return res;
+    return res;
 }
 
 function getBancoTopicosPorLer() {
-    chrome.runtime.sendMessage({ "get-unread-topics": true }, function (res) {
-        let topicos = res.topics.filter( topico => topico.link );
+    browser.runtime.sendMessage({ "get-unread-topics": true }, function (res) {
+        let topicos = res.topics.filter(topico => topico.link);
         totalTopicos = topicos.length;
 
         $("ul#topicosPorLer").html("");
@@ -250,7 +250,7 @@ function getBancoTopicosPorLer() {
 
         $("#topicosPorLer li").first().addClass("active");
         updateReportSelecionados();
-        $("#reportLastUpdate").text( new Date(res.lastUpdate).prettyDate() ) ;
+        $("#reportLastUpdate").text(new Date(res.lastUpdate).prettyDate());
     });
 }
 
@@ -270,7 +270,7 @@ function filter(by, container) {
     if (value) {
         $("#topicosPorLer, #reportSelecionados, #reportLastUpdate").hide();
         $(container).fadeIn();
-        chrome.runtime.sendMessage({ "search-topics": value }, function (topicosPotenciais) {
+        browser.runtime.sendMessage({ "search-topics": value }, function (topicosPotenciais) {
             $(container).html("");
             for (var i = 0; i < topicosPotenciais.length; i++) {
                 $(container).append(htmlRowTopico(topicosPotenciais[i].name, topicosPotenciais[i].id));

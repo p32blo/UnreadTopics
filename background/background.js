@@ -55,8 +55,8 @@ function updateBadge() {
         newText += unreadPosts;
     }
 
-    chrome.browserAction.setBadgeText({ text: newText });
-    chrome.browserAction.setBadgeBackgroundColor({ color: newColor });
+    browser.browserAction.setBadgeText({ text: newText });
+    browser.browserAction.setBadgeBackgroundColor({ color: newColor });
 }
 
 
@@ -79,7 +79,7 @@ function openUnreadTopics() {
 }
 
 function openConfigPage() {
-    chrome.runtime.openOptionsPage();
+    browser.runtime.openOptionsPage();
 }
 
 function stopUpdater() {
@@ -132,7 +132,7 @@ function updater() {
 
 
 // Receive signal when computer idle state change
-chrome.idle.onStateChanged.addListener((newIdleState) => {
+browser.idle.onStateChanged.addListener((newIdleState) => {
     // console.log("Idle state changed", newIdleState, new Date());
     if (currentIdleState === "locked" && newIdleState === "active") {
         updater().then(() => {
@@ -148,30 +148,30 @@ chrome.idle.onStateChanged.addListener((newIdleState) => {
 });
 
 
-// Receive push notifications from GCM/FCM
-chrome.gcm.onMessage.addListener(message => {
-    console.log("state when onMessage", currentIdleState, new Date().getTime(), new Date());
-    if (!topics.isLoggedIn() || currentIdleState === "locked") return;
-    if (message.data && message.data.topic && message.data.board && message.data.posterName) {
-        // console.log("Push Message Received:", message, new Date(), Date.now());
+// // Receive push notifications from GCM/FCM
+// chrome.gcm.onMessage.addListener(message => {
+//     console.log("state when onMessage", currentIdleState, new Date().getTime(), new Date());
+//     if (!topics.isLoggedIn() || currentIdleState === "locked") return;
+//     if (message.data && message.data.topic && message.data.board && message.data.posterName) {
+//         // console.log("Push Message Received:", message, new Date(), Date.now());
 
-        if (topics.knownBoard(message.data.board)) {
-            if (topics.receiveValidPost(message.data)) {
-                notifyUnreadTopics();
-            }
-        } else {
-            // Unknown Board - what to do?
-            console.log("Unknown Board");
-        }
+//         if (topics.knownBoard(message.data.board)) {
+//             if (topics.receiveValidPost(message.data)) {
+//                 notifyUnreadTopics();
+//             }
+//         } else {
+//             // Unknown Board - what to do?
+//             console.log("Unknown Board");
+//         }
 
-    } else {
-        console.log("Unknown Message Received");
-    }
-});
+//     } else {
+//         console.log("Unknown Message Received");
+//     }
+// });
 
 
 // Receive messages from tabs and other extensions
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // console.log(request, sender);
     for (let req in request) {
         switch (req) {
@@ -224,28 +224,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 // Receives clicks on notifications
-chrome.notifications.onClicked.addListener(function (notificationId) {
+browser.notifications.onClicked.addListener(function (notificationId) {
     switch (notificationId) {
         case "unread": openUnreadTopics(); break;
         case "update": openConfigPage(); break;
     }
 
-    chrome.notifications.clear(notificationId);
+    browser.notifications.clear(notificationId);
 });
 
 // Receives clicks on notifications buttons
-chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
+browser.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
     if (notificationId === "unread") {
         if (buttonIndex === 0) {
             notifs.postponeHourPeriod();
         } /* else if (...) */
     }
 
-    chrome.notifications.clear(notificationId);
+    browser.notifications.clear(notificationId);
 });
 
 // Receives (key) commands from the browser/OS
-chrome.commands.onCommand.addListener(function (command) {
+browser.commands.onCommand.addListener(function (command) {
     switch (command) {
         case "open-unread-topics": openUnreadTopics(); break;
         case "open-forum": tabs.openLinks([topics.prefs.forumURL]); break;
@@ -253,8 +253,8 @@ chrome.commands.onCommand.addListener(function (command) {
 });
 
 // Receives signal on extension installation
-chrome.runtime.onInstalled.addListener(function (details) {
-    let newVersion = chrome.runtime.getManifest().version;
+browser.runtime.onInstalled.addListener(function (details) {
+    let newVersion = browser.runtime.getManifest().version;
 
     if (details.previousVersion < newVersion) {
         Analytics.addEvent('extension-update', 'request', newVersion);

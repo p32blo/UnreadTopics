@@ -1,11 +1,9 @@
 {
 	"manifest_version": 2,
-
 	"name": "Tópicos Por Ler Em Separadores",
 	"short_name": "Tópicos por Ler",
 	"description": "Abre os tópicos por ler em diferentes separadores, notificações, pesquisas, ementa da UM e upload de imagens",
 	"version": "3.0.4",
-
 	"commands": {
 		"open-unread-topics": {
 			"suggested_key": {
@@ -20,7 +18,6 @@
 			"description": "Open Forum"
 		}
 	},
-
 	"icons": {
 		"16": "img/icon/icon_16.png",
 		"48": "img/icon/icon_48.png",
@@ -28,29 +25,23 @@
 		"256": "img/icon/icon_256.png",
 		"512": "img/icon/icon.png"
 	},
-
 	"browser_action": {
 		"default_icon": "img/icon/icon.png",
 		"default_popup": "popup/popup.html"
 	},
-
 	"permissions": [
 		"http://*/*",
 		"https://*/*",
 		"tabs",
 		"notifications",
 		"storage",
-		"gcm",
 		"idle"
 	],
-
 	"background": {
 		"persistent": true,
 		"page": "background/background.html"
 	},
-
 	"options_page": "options/options.html",
-
 	"content_scripts": [
 		{
 			"matches": [
@@ -68,6 +59,5 @@
 			]
 		}
 	],
-
 	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'"
 }
